@@ -1,59 +1,59 @@
 body {
-	font-family: Lucida Grande,Lucida Sans,Arial,sans-serif;
-	font-size: 70%;
+    font-family: Lucida Grande, Lucida Sans, Arial, sans-serif;
+    font-size: 70%;
 }
 
 #formant-values {
-	width: 100%;
-	height: 15em;
-	margin-top: 1em;
+    width: 100%;
+    height: 15em;
+    margin-top: 1em;
 }
 
 #control-panel {
-	float: right;
-	width: 40em;
+    float: right;
+    width: 40em;
 }
 
 #canvas-holder {
-	width: 50%;
+    width: 50%;
 }
-    
+
 .draggable {
     cursor: move;
 }
-    
+
 .ui-accordion-content {
-    height: 5em;   
+    height: 5em;
 }
 
 label {
-	display: block;
-	float: left;
-	width: 8em;
-	text-align: right;
-	padding-right: 0.5em;
+    display: block;
+    float: left;
+    width: 8em;
+    text-align: right;
+    padding-right: 0.5em;
 }
 
 input[type="number"] {
-	width: 4em;
+    width: 4em;
 }
 
 #accordion > .ui-accordion-content {
-	padding-left: 0px;
+    padding-left: 0px;
 }
 
 #download-form {
-	margin-top: 1em;
+    margin-top: 1em;
 }
 
 #generate-button {
-	float: right;
+    float: right;
 }
 
 .custom-qtip {
-	font-size: 150%;
+    font-size: 150%;
 }
 
 .crosshairs {
-	cursor: crosshair;
+    cursor: crosshair;
 }
