@@ -77,7 +77,7 @@ $( "#min-max" )
             chart.draw();
 		});
 
-$('#intermediateLineColor').ColorPicker({
+$('#intermediateLineColor').colorpicker({
 	color: '#aaaaaa',
 	onShow: function (colpkr) {
 		$(colpkr).fadeIn(500);
@@ -136,7 +136,7 @@ $('#labels').change(function() {
 	}
 });		
 		
-$('#trapezoidLineColor').ColorPicker({
+$('#trapezoidLineColor').colorpicker({
 	color: '#aaaaaa',
 	onShow: function (colpkr) {
 		$(colpkr).fadeIn(500);
@@ -152,7 +152,7 @@ $('#trapezoidLineColor').ColorPicker({
 	}
 });
 
-$('#dotColor').ColorPicker({
+$('#dotColor').colorpicker({
 	color: '#000000',
 	onShow: function (colpkr) {
 		$(colpkr).fadeIn(500);

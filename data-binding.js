@@ -142,7 +142,7 @@ $("#f2max").bind("change", function() {
 function setGuiElementsFromData(chart) {
     $('#trapezoid-slider').val( chart.p.trapezoidRatio );
     $('#trapezoid-number').val( chart.p.trapezoidRatio );
-    $('#trapezoidLineColor').ColorPickerSetColor( chart.p.trapezoidLineColor.replace("#","") );
+    $('#trapezoidLineColor').colorpicker.setColor( chart.p.trapezoidLineColor.replace("#","") );
     $('#trapezoidLineColor').val( chart.p.trapezoidLineColor.replace("#","") );
     $('#trapezoidLineWidth-slider').val( chart.p.trapezoidLineWidth );
     $('#trapezoidLineWidth-number').val( chart.p.trapezoidLineWidth );
@@ -150,7 +150,7 @@ function setGuiElementsFromData(chart) {
     $('#hlines-number').val( chart.p.horizontalLines );
     $('#vlines-slider').val( chart.p.verticalLines );
     $('#vlines-number').val( chart.p.verticalLines );
-    $('#intermediateLineColor').ColorPickerSetColor( chart.p.gridLineColor.replace("#","") );
+    $('#intermediateLineColor').colorpicker.setColor( chart.p.gridLineColor.replace("#","") );
     $('#intermediateLineColor').val( chart.p.gridLineColor.replace("#","") );
     $('#intermediateLineWidth-slider').val( chart.p.gridLineWidth );
     $('#intermediateLineWidth-number').val( chart.p.gridLineWidth );
@@ -171,7 +171,7 @@ function setGuiElementsFromData(chart) {
     $('#markType').val( chart.p.markType );
     $('#fontFamily').val( chart.p.fontFamily );
     $('#fontSize').val( chart.p.fontSize );
-    $('#dotColor').ColorPickerSetColor( chart.p.dotFillColor.replace("#","") );
+    $('#dotColor').colorpicker.setColor( chart.p.dotFillColor.replace("#","") );
     $('#dotColor').val( chart.p.dotFillColor.replace("#","") );
     $('#dotRadius-slider').val( chart.p.dotRadius );
     $('#dotRadius-number').val( chart.p.dotRadius );

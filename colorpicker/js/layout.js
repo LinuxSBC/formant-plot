@@ -8,8 +8,8 @@
 			currentTab = $('ul.navigationTabs a:first');
 		}
 		showTab.apply(currentTab.get(0));
-		$('#colorpickerHolder').ColorPicker({flat: true});
-		$('#colorpickerHolder2').ColorPicker({
+		$('#colorpickerHolder').colorpicker({flat: true});
+		$('#colorpickerHolder2').colorpicker({
 			flat: true,
 			color: '#00ff00',
 			onSubmit: function(hsb, hex, rgb) {
@@ -22,7 +22,7 @@
 			$('#colorpickerHolder2').stop().animate({height: widt ? 0 : 173}, 500);
 			widt = !widt;
 		});
-		$('#colorpickerField1, #colorpickerField2, #colorpickerField3').ColorPicker({
+		$('#colorpickerField1, #colorpickerField2, #colorpickerField3').colorpicker({
 			onSubmit: function(hsb, hex, rgb, el) {
 				$(el).val(hex);
 				$(el).ColorPickerHide();
