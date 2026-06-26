@@ -1,0 +1,24 @@
+{
+  "compilerOptions": {
+    "target": "esnext",
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
+    "outDir": "./dist",
+    "rootDir": ".",
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "strict": false, // TODO: change
+    "skipLibCheck": true,
+    "allowJs": true,
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+    "types": ["node", "jquery", "raphael", "qtip2", "jquery-ui"],
+    "paths": {}
+  },
+  "include": [
+    "**/*.ts",
+    "node_modules/@types/jquery/misc.d.ts"
+  ],
+  "exclude": ["node_modules", "dist"]
+}

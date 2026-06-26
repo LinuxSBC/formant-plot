@@ -1,10 +1,12 @@
-$(document).ready(function () {
+import { FormantChart } from "./class-FormantChart.js";
+import { bindDataControls, setGuiElementsFromData } from "./data-binding.js";
 
-    $('#control-panel > h1').click(function () {
+jQuery(function() {
+    $('#control-panel > h1').on("click", function () {
         $(this).next().toggle();
     });
 
-    window.chart = new FormantChart({
+    const chart = new FormantChart({
         figWidth: 600,
         figHeight: 400,
         figMargin: 10,
@@ -22,18 +24,20 @@ $(document).ready(function () {
         trapezoidLineColor: "#000000",
         trapezoidLineWidth: 2,
     }, "canvas");
-    window.chart.setData($("#formant-values").val());
+    chart.setData($("#formant-values").val());
 
-    window.shifted = false;
+    bindDataControls(chart);
+
+    let shifted = false;
     $(document).on('keyup keydown', function (e) {
-        window.shifted = e.shiftKey;
-        if (window.shifted) {
+        shifted = e.shiftKey;
+        if (shifted) {
             $('#canvas').addClass('crosshairs');
         } else {
             $('#canvas').removeClass('crosshairs');
             $('#coordinates').text("");
         }
-        if (e.keyCode == 80) {
+        if (e.key === "p") {
             praatInput();
         }
     });
@@ -48,8 +52,8 @@ $(document).ready(function () {
         });
 
 // http://stackoverflow.com/a/18197341/1447002
-    function download(filename, text) {
-        var element = document.createElement('a');
+    function download(filename: string, text: string) {
+        const element = document.createElement('a');
         element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
         element.setAttribute('download', filename);
 
@@ -76,12 +80,12 @@ $(document).ready(function () {
             chart.draw();
         });
 
-    const intermediaLineColor = document.getElementById("intermediateLineColor");
-    intermediaLineColor.addEventListener("input", function (event) {
+    const intermediateLineColor = document.getElementById("intermediateLineColor");
+    intermediateLineColor.addEventListener("input", function (event) {
         chart.p.gridLineColor = event.target.value;
         chart.draw();
     });
-    intermediaLineColor.addEventListener("change", function (event) {
+    intermediateLineColor.addEventListener("change", function (event) {
         chart.p.gridLineColor = event.target.value;
         chart.draw();
     });
@@ -89,42 +93,57 @@ $(document).ready(function () {
     $("#update-highlight")
         .button()
         .click(function () {
-            if ($('#highlightRE').val().length > 0) {
-                var re = new RegExp($('#highlightRE').val());
+            let highlightRE = $('#highlightRE').val();
+            if (Array.isArray(highlightRE))
+                highlightRE = highlightRE[0];
+            if (typeof highlightRE === "number")
+                highlightRE = highlightRE.toString();
+            if (highlightRE.length > 0) {
+                const re = new RegExp(highlightRE);
                 $("text > tspan").each(function () {
-                    var text = $(this).parent();
-                    var circle = $("circle[data-index=" + text.data('index') + "]");
+                    const text = $(this).parent();
+                    const circle = $("circle[data-index=" + text.data('index') + "]");
                     if (re.test($(this).text())) {
-                        text.attr("fill", $('#highlightColor').val());
-                        circle.attr("fill", $('#highlightColor').val());
+                        let highlightColor = $('#highlightColor').val();
+                        if (Array.isArray(highlightColor))
+                            highlightColor = highlightColor[0];
+                        text.attr("fill", highlightColor);
+                        circle.attr("fill", highlightColor);
                     } else {
                         text.attr("fill", '#000');
-                        circle.attr("fill", window.chart.p.dotFillColor);
+                        circle.attr("fill", chart.p.dotFillColor);
                     }
                 });
             }
         });
 
-    $('#labels').change(function () {
-        var label = $(this).val();
+    $('#labels').on("change", function () {
+        let label = $(this).val();
+        if (Array.isArray(label))
+            label = label[0];
+        if (typeof label === "number")
+            label = label.toString();
         if (label.length > 0) {
             $("text > tspan").each(function () {
-                var text = $(this).parent();
-                var circle = $("circle[data-index=" + text.data('index') + "]");
-                if ($(this).text() == label) {
-                    text.attr("fill", $('#highlightColor').val());
-                    circle.attr("fill", $('#highlightColor').val());
+                const text = $(this).parent();
+                const circle = $("circle[data-index=" + text.data('index') + "]");
+                if ($(this).text() === label) {
+                    let highlightColor = $('#highlightColor').val();
+                    if (Array.isArray(highlightColor))
+                        highlightColor = highlightColor[0];
+                    text.attr("fill", highlightColor);
+                    circle.attr("fill", highlightColor);
                 } else {
                     text.attr("fill", '#000');
-                    circle.attr("fill", window.chart.p.dotFillColor);
+                    circle.attr("fill", chart.p.dotFillColor);
                 }
             });
         } else {
             $("text > tspan").each(function () {
-                var text = $(this).parent();
-                var circle = $("circle[data-index=" + text.data('index') + "]");
+                const text = $(this).parent();
+                const circle = $("circle[data-index=" + text.data('index') + "]");
                 text.attr("fill", '#000');
-                circle.attr("fill", window.chart.p.dotFillColor);
+                circle.attr("fill", chart.p.dotFillColor);
             });
         }
     });
@@ -153,14 +172,14 @@ $(document).ready(function () {
     $("#highlight-accordion").accordion({ autoHeight: false });
 
     function praatInput() {
-        var input = prompt("Copy line from the Praat's “Formant listing” command.", "");
+        const input = prompt("Copy line from the Praat's “Formant listing” command.", "");
         if (input.length > 0) {
-            var regexp = /^[0-9]+\.[0-9]+\s+([0-9]+\.[0-9]+)\s+([0-9]+\.[0-9]+)/;
-            var match = regexp.exec(input);
+            const regexp = /^[0-9]+\.[0-9]+\s+([0-9]+\.[0-9]+)\s+([0-9]+\.[0-9]+)/;
+            const match = regexp.exec(input);
             if (match !== null && match.length === 3) {
                 $("text[data-index='-999']").remove();
                 $("circle[data-index='-999']").remove();
-                window.chart.plotPoint(match[1], match[2], "Praat", "-999", "Praat");
+                chart.plotPoint(match[1], match[2], "Praat", "-999", "Praat");
             }
         }
     }

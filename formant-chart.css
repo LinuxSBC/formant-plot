@@ -39,7 +39,7 @@ input[type="number"] {
 }
 
 #accordion > .ui-accordion-content {
-    padding-left: 0px;
+    padding-left: 0;
 }
 
 #download-form {

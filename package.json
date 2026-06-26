@@ -1,4 +1,15 @@
 {
-  "name": "Formant-Chart",
-  "version": "0.1.0"
+  "name": "formant-chart",
+  "version": "0.2.0",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc"
+  },
+  "devDependencies": {
+    "@types/jquery": "^4.0.1",
+    "@types/qtip2": "^2.2.34",
+    "@types/raphael": "^2.3.10",
+    "typescript": "^6.0.3"
+  },
+  "type": "module"
 }
