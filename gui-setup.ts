@@ -17,8 +17,7 @@ jQuery(function() {
         dotFillColor: "#000000",
         fontSize: 15,
         fontFamily: "Charis SIL",
-        markType: "labeled-dot", //    markType: "label-only",
-//    markType: "dot-only",
+        markType: "labeled-dot",
         gridLineColor: "#aaaaaa",
         gridLineWidth: 1,
         trapezoidLineColor: "#000000",
@@ -28,10 +27,9 @@ jQuery(function() {
 
     bindDataControls(chart);
 
-    let shifted = false;
     $(document).on('keyup keydown', function (e) {
-        shifted = e.shiftKey;
-        if (shifted) {
+        chart.shifted = e.shiftKey ?? false;
+        if (chart.shifted) {
             $('#canvas').addClass('crosshairs');
         } else {
             $('#canvas').removeClass('crosshairs');
@@ -46,13 +44,16 @@ jQuery(function() {
 
     $("#generate-button")
         .button()
-        .click(function () {
+        .on("click", function () {
             chart.setData($("#formant-values").val());
             return false;
         });
 
-// http://stackoverflow.com/a/18197341/1447002
-    function download(filename: string, text: string) {
+    // http://stackoverflow.com/a/18197341/1447002
+    function download(filename: string, text?: string) {
+        if (!text) {
+            return;
+        }
         const element = document.createElement('a');
         element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
         element.setAttribute('download', filename);
@@ -67,33 +68,35 @@ jQuery(function() {
 
     $("#download-button")
         .button()
-        .click(function () {
-            download('chart.svg', chart.paper.toSVG());
+        .on("click", function () {
+            download('chart.svg', document.getElementById(chart.elementId)?.innerHTML);
         });
 
     $("#min-max")
         .button()
-        .click(function () {
+        .on("click", function () {
             chart.removeFormantLimits();
             chart.minimax();
             setGuiElementsFromData(chart);
             chart.draw();
         });
 
-    const intermediateLineColor = document.getElementById("intermediateLineColor");
-    intermediateLineColor.addEventListener("input", function (event) {
-        chart.p.gridLineColor = event.target.value;
+    const intermediateLineColor = document.getElementById("intermediateLineColor") as HTMLInputElement;
+    intermediateLineColor.addEventListener("input", function () {
+        chart.p.gridLineColor = intermediateLineColor.value;
         chart.draw();
     });
-    intermediateLineColor.addEventListener("change", function (event) {
-        chart.p.gridLineColor = event.target.value;
+    intermediateLineColor.addEventListener("change", function () {
+        chart.p.gridLineColor = intermediateLineColor.value;
         chart.draw();
     });
 
     $("#update-highlight")
         .button()
-        .click(function () {
+        .on("click", function () {
             let highlightRE = $('#highlightRE').val();
+            if (!highlightRE)
+                return;
             if (Array.isArray(highlightRE))
                 highlightRE = highlightRE[0];
             if (typeof highlightRE === "number")
@@ -105,6 +108,8 @@ jQuery(function() {
                     const circle = $("circle[data-index=" + text.data('index') + "]");
                     if (re.test($(this).text())) {
                         let highlightColor = $('#highlightColor').val();
+                        if (!highlightColor)
+                            return;
                         if (Array.isArray(highlightColor))
                             highlightColor = highlightColor[0];
                         text.attr("fill", highlightColor);
@@ -119,6 +124,8 @@ jQuery(function() {
 
     $('#labels').on("change", function () {
         let label = $(this).val();
+        if (!label)
+            return;
         if (Array.isArray(label))
             label = label[0];
         if (typeof label === "number")
@@ -129,6 +136,8 @@ jQuery(function() {
                 const circle = $("circle[data-index=" + text.data('index') + "]");
                 if ($(this).text() === label) {
                     let highlightColor = $('#highlightColor').val();
+                    if (!highlightColor)
+                        return;
                     if (Array.isArray(highlightColor))
                         highlightColor = highlightColor[0];
                     text.attr("fill", highlightColor);
@@ -148,31 +157,33 @@ jQuery(function() {
         }
     });
 
-    const trapezoidLineColor = document.getElementById("trapezoidLineColor");
-    trapezoidLineColor.addEventListener("input", function (event) {
-        chart.p.trapezoidLineColor = event.target.value;
+    const trapezoidLineColor = document.getElementById("trapezoidLineColor") as HTMLInputElement;
+    trapezoidLineColor.addEventListener("input", function () {
+        chart.p.trapezoidLineColor = trapezoidLineColor.value;
         chart.draw();
     });
-    trapezoidLineColor.addEventListener("change", function (event) {
-        chart.p.trapezoidLineColor = event.target.value;
-        chart.draw();
-    });
-
-    const dotColor = document.getElementById("dotColor");
-    dotColor.addEventListener("input", function (event) {
-        chart.p.dotFillColor = event.target.value;
-        chart.draw();
-    });
-    dotColor.addEventListener("change", function (event) {
-        chart.p.dotFillColor = event.target.value;
+    trapezoidLineColor.addEventListener("change", function () {
+        chart.p.trapezoidLineColor = trapezoidLineColor.value;
         chart.draw();
     });
 
-    $("#accordion").accordion({ autoHeight: false });
-    $("#highlight-accordion").accordion({ autoHeight: false });
+    const dotColor = document.getElementById("dotColor") as HTMLInputElement;
+    dotColor.addEventListener("input", function () {
+        chart.p.dotFillColor = dotColor.value;
+        chart.draw();
+    });
+    dotColor.addEventListener("change", function () {
+        chart.p.dotFillColor = dotColor.value;
+        chart.draw();
+    });
+
+    $("#accordion").accordion({ heightStyle: "content" });
+    $("#highlight-accordion").accordion({ heightStyle: "content" });
 
     function praatInput() {
         const input = prompt("Copy line from the Praat's “Formant listing” command.", "");
+        if (!input)
+            return;
         if (input.length > 0) {
             const regexp = /^[0-9]+\.[0-9]+\s+([0-9]+\.[0-9]+)\s+([0-9]+\.[0-9]+)/;
             const match = regexp.exec(input);

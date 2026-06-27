@@ -28,17 +28,21 @@ type Range = {
 
 export class FormantChart {
     p: ConstructorParams;
-    data: any;
+    data: string[][];
     canvasElement: JQuery<HTMLElement>;
     paper: RaphaelPaper;
     elementId: string;
     range: Range;
+    shifted: boolean;
 
     constructor(parameters: ConstructorParams, elementId: string) {
         this.p = parameters;
         this.elementId = elementId;
         this.canvasElement = $('#' + this.elementId);
         this.range = undefined;
+        this.shifted = false;
+        this.data = [];
+        this.paper = Raphael(this.elementId, this.p.figWidth, this.p.figHeight);
     }
 
     draw() {
@@ -59,12 +63,17 @@ export class FormantChart {
             }
         }
 
-        window.chart.canvasElement.mousemove(function (event: { clientX: number; clientY: number; }) {
-            if (window.shifted) {
-                const bnds = document.getElementById(window.chart.elementId).getBoundingClientRect();
-                const fx = (event.clientX - bnds.left) / bnds.width * window.chart.canvasElement.width();
-                const fy = (event.clientY - bnds.top) / bnds.height * window.chart.canvasElement.height();
-                $('#coordinates').text('F1: ' + window.chart.f1(fy) + ', F2: ' + window.chart.f2(fx));
+        const chart = this;
+        this.canvasElement.on("mousemove", function (event: { clientX: number; clientY: number; }) {
+            if (chart.shifted) {
+                const bnds = document.getElementById(chart.elementId)?.getBoundingClientRect();
+                const width = chart.canvasElement.width();
+                const height = chart.canvasElement.height();
+                if (bnds && width && height) {
+                    const fx = (event.clientX - bnds.left) / bnds.width * width;
+                    const fy = (event.clientY - bnds.top) / bnds.height * height;
+                    $('#coordinates').text('F1: ' + chart.f1(fy) + ', F2: ' + chart.f2(fx));
+                }
             }
         });
 
@@ -73,16 +82,6 @@ export class FormantChart {
         });
 
         $('[title!=""]').qtip({ style: { classes: 'qtip-shadow custom-qtip' } });
-    };
-
-    toSvg() {
-        const svgCode = this.paper.toSVG();
-        const a = document.createElement('a');
-        a.download = 'mySvg.svg';
-        a.type = 'image/svg+xml';
-        const blob = new Blob([svgCode], { "type": "image/svg+xml" });
-        a.href = (window.URL || webkitURL).createObjectURL(blob);
-        a.click();
     };
 
     drawTrapezoid() {
@@ -116,6 +115,9 @@ export class FormantChart {
     };
 
     plotPoint(f1: string, f2: string, label: string, index: string | number, title?: string) {
+        if (typeof index === "number") {
+            index = index.toString();
+        }
         title = typeof title !== 'undefined' ? title : '';
         const x = this.positionX(parseInt(f2));
         const y = this.positionY(parseInt(f1));
@@ -138,7 +140,7 @@ export class FormantChart {
         }
     };
 
-    drawDot(x, y) {
+    drawDot(x: number, y: number) {
         const d = this.paper.circle(x, y, this.p.dotRadius);
         d.attr("fill", this.p.dotFillColor);
         d.attr("stroke-width", 0);
@@ -147,7 +149,7 @@ export class FormantChart {
 
     drawText(x: number, y: number, label: string, startAnchor: boolean) {
         const t = this.paper.text(x, y, label);
-        if (startAnchor === true) {
+        if (startAnchor) {
             t.attr("text-anchor", "start");
         }
         t.attr("font-family", this.p.fontFamily);
@@ -157,23 +159,35 @@ export class FormantChart {
         return t;
     };
 
-    formatToolTip(x, y, label, title) {
+    formatToolTip(x: string, y: string, label: string, title: string) {
         return "<p>" + label + " (" + x + ", " + y + ")</p><p>" + title + "</p>";
     };
 
     positionY(f1: number) {
+        if (!this.range) {
+            return 0;
+        }
         return this.plotTop() + this.plotHeight() * (f1 - this.range.f1Min) / (this.range.f1Max - this.range.f1Min);
     };
 
     positionX(f2: number) {
+        if (!this.range) {
+            return 0;
+        }
         return this.plotRight() - this.plotWidth() * (f2 - this.range.f2Min) / (this.range.f2Max - this.range.f2Min);
     };
 
     f1(y: number) {
+        if (!this.range) {
+            return 0;
+        }
         return Math.round(((y - this.plotTop()) / this.plotHeight()) * (this.range.f1Max - this.range.f1Min) + this.range.f1Min);
     };
 
     f2(x: number) {
+        if (!this.range) {
+            return 0;
+        }
         return Math.round(((this.plotRight() - x) / this.plotWidth()) * (this.range.f2Max - this.range.f2Min) + this.range.f2Min);
     };
 
@@ -208,19 +222,19 @@ export class FormantChart {
     minimax() {
         if (!this.range) {
             const maxF1 = Math.max.apply(Math, this.data.map(function (v) {
-                return v[1];
+                return parseInt(v[1]);
             }));
 
             const maxF2 = Math.max.apply(Math, this.data.map(function (v) {
-                return v[2];
+                return parseInt(v[2]);
             }));
 
             const minF1 = Math.min.apply(Math, this.data.map(function (v) {
-                return v[1];
+                return parseInt(v[1]);
             }));
 
             const minF2 = Math.min.apply(Math, this.data.map(function (v) {
-                return v[2];
+                return parseInt(v[2]);
             }));
 
             const multiplier = 0.1;
@@ -235,49 +249,55 @@ export class FormantChart {
         }
     };
 
-    setData(data) {
-        if (this.toType(data) == "string") {
+    setData(data: unknown) {
+        if (typeof data == "string") {
             this.data = this.parseStringTable(data);
-        } else {
+        } else if (Array.isArray(data) && data.length > 0 && Array.isArray(data[0]) && typeof data[0][0] === "string") {
             this.data = data;
+        } else {
+            console.error("Invalid data format. Expected a string or a 2D array of strings.");
+            return;
         }
         this.minimax();
         this.draw();
     };
 
+    // takes the passed formant table (TSV format + comments) and turns it into a 2D array
     parseStringTable(plainText: string) {
-        let labels = [];
-        const dataTable = [];
+        let labels: string[] = [];
+        const dataTable: string[][] = [];
         const lines = plainText.trim().split(/[\n\r]/);
-        const commentPrefix = $("#ignore-lines").val();
+        let commentPrefix = $("#ignore-lines").val();
+        if (Array.isArray(commentPrefix)) {
+            commentPrefix = commentPrefix[0];
+        } else if (typeof commentPrefix !== "string") {
+            commentPrefix = commentPrefix?.toString();
+        }
         for (let i = 0; i < lines.length; i++) {
-            if (commentPrefix.length === 0 || commentPrefix != lines[i].substr(0, commentPrefix.length)) {
+            if (!commentPrefix || commentPrefix.length === 0 || !lines[i].startsWith(commentPrefix)) {
                 const elements = lines[i].trim().split(/\t+/);
                 dataTable.push(elements);
                 labels.push(elements[0]);
             }
         }
+
+        // Add the sound labels to the highlight dropdown menu
         labels = labels.filter(onlyUnique).sort();
-        const labelsElement = $('#labels');
-        labelsElement
+        const $labels = $('#labels');
+        $labels
             .find('option')
             .remove();
-        labelsElement
+        $labels
             .append($("<option></option>"));
         $.each(labels, function (key, value) {
-            labelsElement
+            $labels
                 .append($("<option></option>")
                     .text(value));
         });
         return dataTable;
     };
-
-    /// utility functions
-    toType(obj: object) {
-        return ({}).toString.call(obj).match(/\s([a-zA-Z]+)/)?.[1].toLowerCase();
-    };
 }
 
-function onlyUnique(value, index, self) {
-    return self.indexOf(value) === index;
+function onlyUnique(value: any, index: any, arr: any[]) {
+    return arr.indexOf(value) === index;
 }

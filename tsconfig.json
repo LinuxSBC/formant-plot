@@ -7,13 +7,13 @@
     "rootDir": ".",
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
-    "strict": false, // TODO: change
+    "strict": true,
     "skipLibCheck": true,
     "allowJs": true,
     "declaration": true,
     "declarationMap": true,
     "sourceMap": true,
-    "types": ["node", "jquery", "raphael", "qtip2", "jquery-ui"],
+    "types": ["node", "jquery", "jqueryui", "raphael", "qtip2"],
     "paths": {}
   },
   "include": [
