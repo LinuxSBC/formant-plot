@@ -275,9 +275,14 @@ export class FormantChart {
         }
         for (let i = 0; i < lines.length; i++) {
             if (!commentPrefix || commentPrefix.length === 0 || !lines[i].startsWith(commentPrefix)) {
-                const elements = lines[i].trim().split(/\t+/);
-                dataTable.push(elements);
-                labels.push(elements[0]);
+                let line = lines[i].trim();
+                if (commentPrefix && commentPrefix.length > 0)
+                    line = line.split(commentPrefix)[0].trim(); // remove anything after a comment prefix
+                const elements = line.split(/\t+/);
+                if (elements.length >= 3) { // lines with less than 3 columns are invalid, so ignore them
+                    dataTable.push(elements);
+                    labels.push(elements[0]);
+                }
             }
         }
 
