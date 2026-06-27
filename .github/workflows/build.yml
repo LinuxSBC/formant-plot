@@ -1,4 +1,3 @@
-author: Anna Simmons
 name: Deploy to GitHub Pages
 on:
   push:
