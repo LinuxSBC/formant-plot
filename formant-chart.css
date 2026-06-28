@@ -1,6 +1,6 @@
 body {
     font-family: Lucida Grande, Lucida Sans, Arial, sans-serif;
-    font-size: 70%;
+    font-size: 80%;
 }
 
 #formant-values {
@@ -50,8 +50,12 @@ input[type="number"] {
     float: right;
 }
 
-.custom-qtip {
-    font-size: 150%;
+.tippy-box {
+    font-size: 120%;
+}
+.tippy-box p {
+    margin: 0;
+    padding: 0;
 }
 
 .crosshairs {

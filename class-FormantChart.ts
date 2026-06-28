@@ -81,7 +81,10 @@ export class FormantChart {
             $('#coordinates').text("");
         });
 
-        $('[title!=""]').qtip({ style: { classes: 'qtip-shadow custom-qtip' } });
+        tippy('[data-tippy-content]', {
+            allowHTML: true,
+            theme: 'light-border',
+        });
     };
 
     drawTrapezoid() {
@@ -121,22 +124,24 @@ export class FormantChart {
         title = typeof title !== 'undefined' ? title : '';
         const x = this.positionX(parseInt(f2));
         const y = this.positionY(parseInt(f1));
-        let t, d;
+        let text, point;
         if (this.p.markType == "labeled-dot") {
-            d = this.drawDot(x, y);
-            t = this.drawText(x + 2 * this.p.dotRadius, y - 2 * this.p.dotRadius, label, true);
+            point = this.drawDot(x, y);
+            text = this.drawText(x + 2 * this.p.dotRadius, y - 2 * this.p.dotRadius, label, true);
         } else if (this.p.markType == "label-only") {
-            t = this.drawText(x + 2 * this.p.dotRadius, y - 2 * this.p.dotRadius, label, false);
+            text = this.drawText(x + 2 * this.p.dotRadius, y - 2 * this.p.dotRadius, label, false);
         } else if (this.p.markType == "dot-only") {
-            d = this.drawDot(x, y);
+            point = this.drawDot(x, y);
         }
-        if (typeof t !== 'undefined') {
-            t.node.setAttribute("title", this.formatToolTip(f1, f2, label, title));
-            t.node.setAttribute("data-index", index);
+        // TODO: This works, but it's a bit weird how there are identical tooltips on two different objects.
+        //  Maybe make an invisible ellipse around everything that has the hover? Potential issue with overlap on nearby points, though.
+        if (typeof text !== 'undefined') {
+            text.node.setAttribute("data-tippy-content", this.formatToolTip(f1, f2, label, title));
+            text.node.setAttribute("data-index", index);
         }
-        if (typeof d !== 'undefined') {
-            d.node.setAttribute("title", this.formatToolTip(f1, f2, label, title));
-            d.node.setAttribute("data-index", index);
+        if (typeof point !== 'undefined') {
+            point.node.setAttribute("data-tippy-content", this.formatToolTip(f1, f2, label, title));
+            point.node.setAttribute("data-index", index);
         }
     };
 

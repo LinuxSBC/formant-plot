@@ -10,12 +10,14 @@
           content="Easily create vowel diagrams in a scalable graphics format."/>
     <!-- Libraries -->
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.14.2/themes/base/jquery-ui.css"/>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/qtip2/3.0.3/jquery.qtip.min.css"/>
-
-    <script defer src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tippy.js@6/dist/tippy.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tippy.js@6/themes/light-border.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tippy.js@6/animations/shift-away.css"/>
+    <script defer src="https://code.jquery.com/jquery-4.0.0.min.js"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/raphael@2.3.0/raphael.min.js"></script>
     <script defer src="https://code.jquery.com/ui/1.14.2/jquery-ui.min.js"></script>
-    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/qtip2/3.0.3/jquery.qtip.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/@popperjs/core@2/dist/umd/popper.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/tippy.js@6/dist/tippy-bundle.umd.min.js"></script>
 
     <script type="module" src="./dist/gui-setup.js"></script>
 
@@ -166,7 +168,7 @@
                         spreadsheet, for instance.
                     </li>
                     <li>You can include a fourth data column (i.e., &ldquo;&lt;tab&gt;extra&rdquo;), which will be
-                        displayed in a tooltip when you over over a value—useful for data exploration.
+                        displayed in a tooltip when you hover over a value—useful for data exploration.
                     </li>
                     <li>Adjust the settings using the controls in the other tabs in this panel.</li>
                     <li>Fine-tune your plot by manually moving around any overlapping or unclear labels. (But careful:
@@ -177,7 +179,7 @@
                     </li>
                 </ol>
                 <p>You can drop the image directly into your word processor. If you need to change it to a raster format
-                    (like PNG or JPEG), then you can open the file in <a href="http://www.inkscape.org/"
+                    (like PNG or JPEG), then you can open the file in <a href="https://www.inkscape.org/"
                                                                          target="_blank">Inkscape</a> (free, excellent)
                     and do File | Export Bitmap...</p>
                 <p>Click “Formant Chart” above to collapse this panel.</p>
