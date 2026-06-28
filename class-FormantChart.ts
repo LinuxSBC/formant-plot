@@ -12,7 +12,7 @@ type ConstructorParams = {
     dotFillColor: string;
     fontSize: number;
     fontFamily: string;
-    markType: string;
+    markType: "labeled-dot" | "label-only" | "dot-only";
     gridLineColor: string;
     gridLineWidth: number;
     trapezoidLineColor: string;

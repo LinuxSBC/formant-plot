@@ -156,7 +156,7 @@ export function bindDataControls(chart: FormantChart) {
         let markType = $(this).val();
         if (!markType)
             return;
-        chart.p.markType = toString(markType);
+        chart.p.markType = toString(markType) as typeof chart.p.markType;
         chart.draw();
     });
 

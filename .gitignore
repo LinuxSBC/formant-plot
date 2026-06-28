@@ -39,4 +39,5 @@ Icon
 
 node_modules/
 build/
+dist/
 .idea/
