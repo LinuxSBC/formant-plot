@@ -69,6 +69,17 @@ function toString(val: string | number | string[]) {
 }
 
 export function bindDataControls(chart: FormantChart) {
+    const $f1min = $("#f1min");
+    const $f1max = $("#f1max");
+    const $f2min = $("#f2min");
+    const $f2max = $("#f2max");
+    const $formantValues = $("#formant-values");
+    const $absWidth = $("#absWidth-slider, #absWidth-number");
+    const $absHeight = $("#absHeight-slider, #absHeight-number");
+    const $waWidth = $("#waWidth-slider, #waWidth-number");
+    const $waAspect = $("#waAspect-slider, #waAspect-number");
+    const $autoMiniMax = $("#auto-minimax");
+
     function reciprocalBind(first: string, second: string) {
         $(first).on("change", function () {
             const secondVal = $(this).val();
@@ -176,10 +187,6 @@ export function bindDataControls(chart: FormantChart) {
         chart.draw();
     });
 
-
-    const $absWidth = $("#absWidth-slider, #absWidth-number");
-    const $absHeight = $("#absHeight-slider, #absHeight-number");
-
     function updateChartDimensions(width: number, aspect: number) {
         chart.p.figWidth = width;
         chart.p.figHeight = width * aspect;
@@ -188,7 +195,6 @@ export function bindDataControls(chart: FormantChart) {
         chart.draw();
     }
 
-    const $waWidth = $("#waWidth-slider, #waWidth-number");
     $waWidth.on("change", function () {
         let width = $(this).val();
         if (!width)
@@ -198,7 +204,6 @@ export function bindDataControls(chart: FormantChart) {
             return;
         updateChartDimensions(toFloat(width), toFloat(waAspect));
     });
-    const $waAspect = $("#waAspect-slider, #waAspect-number");
     $waAspect.on("change", function () {
         const waWidth = $("#waWidth-number").val();
         if (!waWidth)
@@ -233,16 +238,33 @@ export function bindDataControls(chart: FormantChart) {
     });
 
 
-    $("#formant-values").on("change", function () {
-        chart.removeFormantLimits();
-        chart.setData($(this).val());
-    });
+    function updateChartData() {
+        if ($autoMiniMax.prop("checked"))
+            chart.removeFormantLimits();
+        chart.setData($formantValues.val());
+        updateFormantRangeInputs();
+    }
+    $formantValues.on("change", updateChartData);
 
+    function updateFormantRangeInputs() {
+        if (chart.range) {
+            $f1min.val(chart.range.f1Min);
+            $f1max.val(chart.range.f1Max);
+            $f2min.val(chart.range.f2Min);
+            $f2max.val(chart.range.f2Max);
+        }
+    }
 
-    const $f1min = $("#f1min");
-    const $f1max = $("#f1max");
-    const $f2min = $("#f2min");
-    const $f2max = $("#f2max");
+    // When auto-minimax is checked, disable manual range inputs
+    function syncAutoMinimaxControls() {
+        const autoMinimax = $autoMiniMax.prop("checked");
+        $("#f1min, #f1max, #f2min, #f2max, #min-max").prop("disabled", autoMinimax);
+        updateChartData();
+        updateFormantRangeInputs();
+    }
+
+    $autoMiniMax.on("change", syncAutoMinimaxControls);
+    syncAutoMinimaxControls();
 
     function updateChartRange() {
         const f1Min = $f1min.val();
