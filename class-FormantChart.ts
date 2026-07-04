@@ -1,5 +1,4 @@
 import { move, start, up } from "./drag-and-drop.js";
-import { RaphaelPaper } from "raphael";
 
 type ConstructorParams = {
     figWidth: number;
@@ -30,7 +29,7 @@ export class FormantChart {
     p: ConstructorParams;
     data: string[][];
     canvasElement: JQuery<HTMLElement>;
-    paper: RaphaelPaper;
+    paper: Paper;
     elementId: string;
     range: Range;
     shifted: boolean;
@@ -42,15 +41,15 @@ export class FormantChart {
         this.range = undefined;
         this.shifted = false;
         this.data = [];
-        this.paper = Raphael(this.elementId, this.p.figWidth, this.p.figHeight);
+        this.paper = new Paper(this.elementId, this.p.figWidth, this.p.figHeight);
     }
 
-    draw() {
+    draw = () => {
         $('svg').remove();
 
         this.canvasElement.width(this.p.figWidth);
 
-        this.paper = Raphael(this.elementId, this.p.figWidth, this.p.figHeight);
+        this.paper = new Paper(this.elementId, this.p.figWidth, this.p.figHeight);
 
         this.drawHorizontalLines();
         this.drawVerticalLines();
@@ -85,16 +84,19 @@ export class FormantChart {
             allowHTML: true,
             theme: 'light-border',
         });
+
+        this.updateHighlights();
     };
 
-    drawTrapezoid() {
+    drawTrapezoid = () => {
         const command = "M" + this.plotLeft() + "," + this.plotTop() + "H" + this.plotRight() + "V" + this.plotBottom() + "H" + (this.plotRight() - this.p.trapezoidRatio * this.plotWidth()) + "L" + this.plotLeft() + "," + this.plotTop();
         const p = this.paper.path(command);
         p.attr("stroke-width", this.p.trapezoidLineWidth);
         p.attr("stroke", this.p.trapezoidLineColor);
+        p.attr("fill", "none");
     };
 
-    drawHorizontalLines() {
+    drawHorizontalLines = () => {
         const intervalSize = this.plotHeight() / (1 + this.p.horizontalLines);
         for (let i = 1; i <= this.p.horizontalLines; i++) {
             const y = i * intervalSize;
@@ -107,7 +109,7 @@ export class FormantChart {
         }
     };
 
-    drawVerticalLines() {
+    drawVerticalLines = () => {
         const intervalSize = this.plotWidth() / (1 + this.p.verticalLines);
         for (let i = 1; i <= this.p.verticalLines; i++) {
             const command = "M" + (this.plotRight() - i * intervalSize) + "," + this.plotTop() + "L" + (this.plotRight() - i * intervalSize * this.p.trapezoidRatio) + "," + this.plotBottom();
@@ -117,7 +119,7 @@ export class FormantChart {
         }
     };
 
-    plotPoint(f1: string, f2: string, label: string, index: string | number, title?: string) {
+    plotPoint = (f1: string, f2: string, label: string, index: string | number, title?: string) => {
         if (typeof index === "number") {
             index = index.toString();
         }
@@ -145,14 +147,14 @@ export class FormantChart {
         }
     };
 
-    drawDot(x: number, y: number) {
+    drawDot = (x: number, y: number) => {
         const d = this.paper.circle(x, y, this.p.dotRadius);
         d.attr("fill", this.p.dotFillColor);
         d.attr("stroke-width", 0);
         return d;
     };
 
-    drawText(x: number, y: number, label: string, startAnchor: boolean) {
+    drawText = (x: number, y: number, label: string, startAnchor: boolean) => {
         const t = this.paper.text(x, y, label);
         if (startAnchor) {
             t.attr("text-anchor", "start");
@@ -164,18 +166,18 @@ export class FormantChart {
         return t;
     };
 
-    formatToolTip(x: string, y: string, label: string, title: string) {
+    formatToolTip = (x: string, y: string, label: string, title: string) => {
         return "<p>" + label + " (" + x + ", " + y + ")</p><p>" + title + "</p>";
     };
 
-    positionY(f1: number) {
+    positionY = (f1: number) => {
         if (!this.range) {
             return 0;
         }
         return this.plotTop() + this.plotHeight() * (f1 - this.range.f1Min) / (this.range.f1Max - this.range.f1Min);
     };
 
-    positionX(f2: number) {
+    positionX = (f2: number) => {
         if (!this.range) {
             return 0;
         }
@@ -196,35 +198,35 @@ export class FormantChart {
         return Math.round(((this.plotRight() - x) / this.plotWidth()) * (this.range.f2Max - this.range.f2Min) + this.range.f2Min);
     };
 
-    plotLeft() {
+    plotLeft = () => {
         return this.p.figMargin;
     };
 
-    plotRight() {
+    plotRight = () => {
         return this.p.figWidth - this.p.figMargin;
     };
 
-    plotTop() {
+    plotTop = () => {
         return this.p.figMargin;
     };
 
-    plotWidth() {
+    plotWidth = () => {
         return this.p.figWidth - 2 * this.p.figMargin;
     };
 
-    plotHeight() {
+    plotHeight = () => {
         return this.p.figHeight - 2 * this.p.figMargin;
     };
 
-    plotBottom() {
+    plotBottom = () => {
         return this.p.figHeight - this.p.figMargin;
     };
 
-    removeFormantLimits() {
+    removeFormantLimits = () => {
         this.range = undefined;
     };
 
-    minimax() {
+    minimax = () => {
         if (!this.range) {
             const maxF1 = Math.max.apply(Math, this.data.map(function (v) {
                 return parseInt(v[1]);
@@ -254,7 +256,7 @@ export class FormantChart {
         }
     };
 
-    setData(data: unknown) {
+    setData = (data: unknown) => {
         if (typeof data == "string") {
             this.data = this.parseStringTable(data);
         } else if (Array.isArray(data) && data.length > 0 && Array.isArray(data[0]) && typeof data[0][0] === "string") {
@@ -268,7 +270,7 @@ export class FormantChart {
     };
 
     // takes the passed formant table (TSV format + comments) and turns it into a 2D array
-    parseStringTable(plainText: string) {
+    parseStringTable = (plainText: string) => {
         let labels: string[] = [];
         const dataTable: string[][] = [];
         const lines = plainText.trim().split(/[\n\r]/);
@@ -294,6 +296,7 @@ export class FormantChart {
         // Add the sound labels to the highlight dropdown menu
         labels = labels.filter(onlyUnique).sort();
         const $labels = $('#labels');
+        const selectedLabel = $labels.val();
         $labels
             .find('option')
             .remove();
@@ -304,10 +307,207 @@ export class FormantChart {
                 .append($("<option></option>")
                     .text(value));
         });
+        if (selectedLabel && labels.includes(selectedLabel.toString())) {
+            $labels.val(selectedLabel);
+        }
         return dataTable;
+    };
+
+    updateHighlights = () => {
+        const openAccordion = $("#highlight-accordion .ui-accordion-content-active");
+        let isRegex = openAccordion.find("#highlightRE").length > 0;
+        const highlightChoice = isRegex ? openAccordion.find("#highlightRE")[0] : openAccordion.find("#labels")[0];
+
+        const chart: FormantChart = this;
+        let label = $(highlightChoice).val();
+        if (!label)
+            return;
+        if (Array.isArray(label))
+            label = label[0];
+        if (typeof label === "number")
+            label = label.toString();
+        if (label.length > 0) {
+            let condition: (text: string) => boolean;
+            if (isRegex) {
+                const re = new RegExp(label);
+                condition = (text: string) => re.test(text);
+            } else {
+                condition = (text: string) => text === label;
+            }
+            $("text > tspan").each(function () {
+                const $element = $(this);
+                const text = $element.parent();
+                const circle = $("circle[data-index=" + text.data('index') + "]");
+                if (condition($(this).text())) {
+                    let highlightColor = $('#highlightColor').val();
+                    if (!highlightColor)
+                        return;
+                    if (Array.isArray(highlightColor))
+                        highlightColor = highlightColor[0];
+                    text.attr("fill", highlightColor);
+                    circle.attr("fill", highlightColor);
+                } else {
+                    text.attr("fill", '#000');
+                    circle.attr("fill", chart.p.dotFillColor);
+                }
+            });
+        } else {
+            $("text > tspan").each(function () {
+                const text = $(this).parent();
+                const circle = $("circle[data-index=" + text.data('index') + "]");
+                text.attr("fill", '#000');
+                circle.attr("fill", chart.p.dotFillColor);
+            });
+        }
     };
 }
 
 function onlyUnique(value: any, index: any, arr: any[]) {
     return arr.indexOf(value) === index;
+}
+
+export class SVGElementWrapper {
+    node: SVGElement;
+    tx = 0;
+    ty = 0;
+    odx = 0;
+    ody = 0;
+
+    constructor(node: SVGElement) {
+        this.node = node;
+    }
+
+    attr(nameOrObj: string | Record<string, any>, value?: any): this {
+        if (typeof nameOrObj === "string") {
+            if (value !== undefined) {
+                this.node.setAttribute(nameOrObj, String(value));
+            }
+        } else {
+            for (const [key, val] of Object.entries(nameOrObj)) {
+                this.node.setAttribute(key, String(val));
+            }
+        }
+        return this;
+    }
+
+    translate(dx: number, dy: number) {
+        this.tx += dx;
+        this.ty += dy;
+        this.node.setAttribute("transform", `translate(${this.tx}, ${this.ty})`);
+    }
+
+    animate(properties: Record<string, any>, duration: number) {
+        const keyframes: Record<string, string>[] = [{}, {}];
+        for (const [key, value] of Object.entries(properties)) {
+            const camelKey = key.replace(/-([a-z])/g, (g) => g[1].toUpperCase());
+            keyframes[0][camelKey] = this.node.getAttribute(key) || "1";
+            keyframes[1][camelKey] = String(value);
+            this.node.setAttribute(key, String(value));
+        }
+        try {
+            this.node.animate(keyframes, { duration, easing: "ease" });
+        } catch (e) {
+            // Fallback in case Web Animations API is not supported.
+        }
+    }
+
+    drag(
+        onmove: (this: SVGElementWrapper, dx: number, dy: number, x: number, y: number, event: PointerEvent) => void,
+        onstart: (this: SVGElementWrapper, x: number, y: number, event: PointerEvent) => void,
+        onup: (this: SVGElementWrapper, event: PointerEvent) => void
+    ) {
+        let dragging = false;
+        let startX = 0;
+        let startY = 0;
+
+        const onPointerDown = (e: PointerEvent) => {
+            if (e.pointerType === "mouse" && e.button !== 0) return;
+            dragging = true;
+            startX = e.clientX;
+            startY = e.clientY;
+            
+            this.node.setPointerCapture(e.pointerId);
+            onstart.call(this, e.clientX, e.clientY, e);
+            
+            e.preventDefault();
+            e.stopPropagation();
+        };
+
+        const onPointerMove = (e: PointerEvent) => {
+            if (!dragging) return;
+            const dx = e.clientX - startX;
+            const dy = e.clientY - startY;
+            onmove.call(this, dx, dy, e.clientX, e.clientY, e);
+            
+            e.preventDefault();
+            e.stopPropagation();
+        };
+
+        const onPointerUp = (e: PointerEvent) => {
+            if (!dragging) return;
+            dragging = false;
+            try {
+                this.node.releasePointerCapture(e.pointerId);
+            } catch (err) {
+                // Ignore capture release error
+            }
+            onup.call(this, e);
+            
+            e.preventDefault();
+            e.stopPropagation();
+        };
+
+        this.node.addEventListener("pointerdown", onPointerDown as EventListener);
+        this.node.addEventListener("pointermove", onPointerMove as EventListener);
+        this.node.addEventListener("pointerup", onPointerUp as EventListener);
+        this.node.addEventListener("pointercancel", onPointerUp as EventListener);
+    }
+}
+
+export class Paper {
+    svg: SVGSVGElement;
+
+    constructor(elementId: string, width: number, height: number) {
+        const container = document.getElementById(elementId);
+        if (!container) {
+            throw new Error(`Container element with id ${elementId} not found`);
+        }
+        // Create SVG element using SVG namespace
+        this.svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+        this.svg.setAttribute("width", String(width));
+        this.svg.setAttribute("height", String(height));
+        // Append to container
+        container.appendChild(this.svg);
+    }
+
+    path(d: string): SVGElementWrapper {
+        const pathEl = document.createElementNS("http://www.w3.org/2000/svg", "path");
+        pathEl.setAttribute("d", d);
+        pathEl.setAttribute("fill", "none");
+        this.svg.appendChild(pathEl);
+        return new SVGElementWrapper(pathEl);
+    }
+
+    circle(cx: number, cy: number, r: number): SVGElementWrapper {
+        const circleEl = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+        circleEl.setAttribute("cx", String(cx));
+        circleEl.setAttribute("cy", String(cy));
+        circleEl.setAttribute("r", String(r));
+        this.svg.appendChild(circleEl);
+        return new SVGElementWrapper(circleEl);
+    }
+
+    text(x: number, y: number, textContent: string): SVGElementWrapper {
+        const textEl = document.createElementNS("http://www.w3.org/2000/svg", "text");
+        textEl.setAttribute("x", String(x));
+        textEl.setAttribute("y", String(y));
+        
+        // Wrap text content in a tspan to keep compatibility with jQuery selectors in gui-setup.ts
+        const tspanEl = document.createElementNS("http://www.w3.org/2000/svg", "tspan");
+        tspanEl.textContent = textContent;
+        textEl.appendChild(tspanEl);
+        
+        this.svg.appendChild(textEl);
+        return new SVGElementWrapper(textEl);
+    }
 }

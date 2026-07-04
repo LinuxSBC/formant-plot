@@ -13,7 +13,7 @@
     "declaration": true,
     "declarationMap": true,
     "sourceMap": true,
-    "types": ["node", "jquery", "jqueryui", "raphael", "tippy.js"],
+    "types": ["node", "jquery", "jqueryui", "tippy.js"],
     "paths": {}
   },
   "include": [

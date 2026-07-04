@@ -330,5 +330,9 @@ export function bindDataControls(chart: FormantChart) {
         }
     });
 
+    $("#update-highlight").button().on("click", chart.updateHighlights);
+    $('#labels').on("change", chart.updateHighlights);
+    $("#highlightColor").on("change", chart.updateHighlights);
+
     setGuiElementsFromData(chart);
 }
