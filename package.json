@@ -3,7 +3,7 @@
   "version": "0.2.0",
   "main": "dist/index.js",
   "scripts": {
-    "build": "tsc --noEmit && vite build",
+    "build": "tsc --noEmit && vite build"
   },
   "devDependencies": {
     "@types/jquery": "^4.0.1",
