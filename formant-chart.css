@@ -1,25 +1,48 @@
 body {
     font-family: Lucida Grande, Lucida Sans, Arial, sans-serif;
     font-size: 80%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    flex-wrap: wrap;
 }
-
-#formant-values {
-    width: 100%;
-    height: 15em;
-    margin-top: 1em;
+*, *::before, *::after {
+    box-sizing: border-box;
 }
 
 #control-panel {
-    float: right;
-    width: 40em;
+    flex: 1 1 40em;
+
+    #formant-values {
+        width: 100%;
+        height: 15em;
+        margin-top: 1em;
+    }
 }
 
-#canvas-holder {
-    width: 50%;
+#main-column {
+    flex: 9999 1 auto;
+    min-width: 0;
+
+    #header {
+        text-align: left;
+    }
+
+    #canvas-holder {
+        overflow-x: auto;
+        #canvas {
+            cursor: crosshair;
+        }
+
+        #coordinates {
+            min-height: 1lh;
+            white-space: nowrap;
+        }
+    }
 }
 
 .draggable {
-    cursor: move;
+    cursor: grab;
 }
 
 .ui-accordion-content {
@@ -56,8 +79,4 @@ input[type="number"] {
 .tippy-box p {
     margin: 0;
     padding: 0;
-}
-
-.crosshairs {
-    cursor: crosshair;
 }

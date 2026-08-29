@@ -33,14 +33,12 @@ export class FormantChart {
     paper: Paper;
     elementId: string;
     range: Range;
-    shifted: boolean;
 
     constructor(parameters: ConstructorParams, elementId: string) {
         this.p = parameters;
         this.elementId = elementId;
         this.canvasElement = $('#' + this.elementId);
         this.range = undefined;
-        this.shifted = false;
         this.data = [];
         this.paper = new Paper(this.elementId, this.p.figWidth, this.p.figHeight);
     }
@@ -49,6 +47,7 @@ export class FormantChart {
         $('svg').remove();
 
         this.canvasElement.width(this.p.figWidth);
+        this.canvasElement.height(this.p.figHeight);
 
         this.paper = new Paper(this.elementId, this.p.figWidth, this.p.figHeight);
 
@@ -65,19 +64,17 @@ export class FormantChart {
 
         const chart = this;
         this.canvasElement.on("mousemove", function (event: { clientX: number; clientY: number; }) {
-            if (chart.shifted) {
-                const bnds = document.getElementById(chart.elementId)?.getBoundingClientRect();
-                const width = chart.canvasElement.width();
-                const height = chart.canvasElement.height();
-                if (bnds && width && height) {
-                    const fx = (event.clientX - bnds.left) / bnds.width * width;
-                    const fy = (event.clientY - bnds.top) / bnds.height * height;
-                    $('#coordinates').text('F1: ' + chart.f1(fy) + ', F2: ' + chart.f2(fx));
-                }
+            const bnds = document.getElementById(chart.elementId)?.getBoundingClientRect();
+            const width = chart.canvasElement.width();
+            const height = chart.canvasElement.height();
+            if (bnds && width && height) {
+                const fx = (event.clientX - bnds.left) / bnds.width * width;
+                const fy = (event.clientY - bnds.top) / bnds.height * height;
+                $('#coordinates').text('F1: ' + chart.f1(fy) + ', F2: ' + chart.f2(fx));
             }
         });
 
-        $('#' + this.elementId).on("mouseleave", function () {
+        this.canvasElement.on("mouseleave", function () {
             $('#coordinates').text("");
         });
 

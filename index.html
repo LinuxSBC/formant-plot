@@ -4,6 +4,7 @@
     <title>Formant Plot</title>
     <meta charset="utf-8"/>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="keywords" lang="en" xml:lang="en"
           content="vowel chart plot formant diagram sociolinguistics phonetics svg scalable graphics"/>
     <meta name="description" lang="en" xml:lang="en"
@@ -11,10 +12,22 @@
     <script type="module" src="./gui-setup.ts"></script>
 </head>
 <body>
+
+<div id="main-column">
+    <div id="header">
+        <h1>Formant Plot</h1>
+        <div>
+            <p><em>Vowel charts without the tears, in scalable vector format (SVG).</em></p>
+        </div>
+    </div>
+
+    <div id="canvas-holder">
+        <div id="canvas"></div>
+        <p id="coordinates"></p>
+    </div>
+</div>
 <div id="control-panel">
-    <h1>Formant Plot</h1>
     <div>
-        <p><em>Vowel charts without the tears, in scalable vector format (SVG).</em></p>
         <div id="tabs">
             <ul>
                 <li><a href="#tabs-4">Instructions</a></li>
@@ -174,7 +187,6 @@
                                                                          target="_blank">Inkscape</a> (free, excellent)
                     and do File | Export Bitmap...</p>
                 <p>Click “Formant Chart” above to collapse this panel.</p>
-                <p>Hold down “Shift” and move your cursor over the plot to see F1 and F2 coordinates.</p>
                 <p>Press “P” and you'll be prompted to copy/paste the output from Praat's “Formant listing” command. It
                     will plot F1/F2 values from that output with the label “Praat.”</p>
             </div>
@@ -202,13 +214,6 @@ iː	284	2117
         <button id="download-button">Download</button>
 
     </div>
-</div>
-
-<div id="canvas-holder">
-
-    <div id="canvas"></div>
-
-    <p id="coordinates"></p>
 </div>
 
 </body>

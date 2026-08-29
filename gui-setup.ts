@@ -40,13 +40,6 @@ jQuery(function() {
     bindDataControls(chart);
 
     $(document).on('keyup keydown', function (e) {
-        chart.shifted = e.shiftKey ?? false;
-        if (chart.shifted) {
-            $('#canvas').addClass('crosshairs');
-        } else {
-            $('#canvas').removeClass('crosshairs');
-            $('#coordinates').text("");
-        }
         if (e.key === "p") {
             praatInput();
         }
