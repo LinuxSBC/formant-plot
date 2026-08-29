@@ -321,13 +321,11 @@ export class FormantChart {
 
         const chart: FormantChart = this;
         let label = $(highlightChoice).val();
-        if (!label)
-            return;
         if (Array.isArray(label))
             label = label[0];
         if (typeof label === "number")
             label = label.toString();
-        if (label.length > 0) {
+        if (label && label.length > 0) {
             let condition: (text: string) => boolean;
             if (isRegex) {
                 const re = new RegExp(label);
