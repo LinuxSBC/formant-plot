@@ -1,4 +1,5 @@
 import { move, start, up } from "./drag-and-drop.js";
+import tippy from "tippy.js";
 
 type ConstructorParams = {
     figWidth: number;

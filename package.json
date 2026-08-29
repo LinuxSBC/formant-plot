@@ -5,11 +5,16 @@
   "scripts": {
     "build": "tsc --noEmit && vite build"
   },
+  "dependencies": {
+    "@popperjs/core": "^2.11.8",
+    "jquery": "^4.0.0",
+    "jquery-ui": "^1.14.2",
+    "tippy.js": "^6.3.7"
+  },
   "devDependencies": {
     "@types/jquery": "^4.0.1",
     "@types/jqueryui": "^1.12.24",
     "@types/node": "^26.0.1",
-    "@types/tippy.js": "^6.3.0",
     "typescript": "^6.0.3",
     "vite": "^8.2.2"
   },

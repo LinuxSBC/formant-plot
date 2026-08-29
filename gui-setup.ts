@@ -1,3 +1,15 @@
+// CSS imports
+// Vite will automatically bundle these into a single optimized stylesheet
+import 'jquery-ui/dist/themes/base/jquery-ui.css';
+import 'tippy.js/dist/tippy.css';
+import 'tippy.js/themes/light-border.css';
+import 'tippy.js/animations/shift-away.css';
+import './formant-chart.css';
+
+// JS imports
+import $ from './jquery-setup.js';
+import 'jquery-ui/dist/jquery-ui.js';
+
 import { FormantChart } from "./class-FormantChart.js";
 import { bindDataControls, setGuiElementsFromData } from "./data-binding.js";
 
