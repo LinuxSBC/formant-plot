@@ -421,7 +421,9 @@ export class SVGElementWrapper {
             dragging = true;
             startX = e.clientX;
             startY = e.clientY;
-            
+
+            this.node.style.cursor = "grabbing";
+
             this.node.setPointerCapture(e.pointerId);
             onstart.call(this, e.clientX, e.clientY, e);
             
@@ -442,6 +444,7 @@ export class SVGElementWrapper {
         const onPointerUp = (e: PointerEvent) => {
             if (!dragging) return;
             dragging = false;
+            this.node.style.cursor = "grab";
             try {
                 this.node.releasePointerCapture(e.pointerId);
             } catch (err) {
